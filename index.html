@@ -1,0 +1,80 @@
+// Структура сайта Naevor — версия портала без выхода
+// Основные маршруты: главная, пустота, эхо, ключи и скрытая зона
+
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+
+export default function App() {
+  const [mode, setMode] = useState("normal");
+  const [secretUnlocked, setSecretUnlocked] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname === "/void") {
+      setMode("dark");
+    } else if (location.pathname === "/echo") {
+      setMode("whisper");
+    } else if (location.pathname === "/keys") {
+      setMode("puzzle");
+    } else {
+      setMode("normal");
+    }
+  }, [location.pathname]);
+
+  const handleSecretPhrase = (input) => {
+    if (input.toLowerCase().includes("i let the serpent in")) {
+      setSecretUnlocked(true);
+    }
+  };
+
+  return (
+    <main className={`site-wrapper mode-${mode}`}>
+      <header>
+        <h1>Naevor</h1>
+        <p>{mode === "dark" ? "...no light returns from here..." : "Welcome, lost one"}</p>
+      </header>
+
+      {location.pathname === "/" && (
+        <section>
+          <h2>Do you hear it?</h2>
+          <input
+            type="text"
+            placeholder="Type what it whispers..."
+            onChange={(e) => handleSecretPhrase(e.target.value)}
+          />
+          {secretUnlocked && (
+            <div className="secret-gate">The Gate Opens...</div>
+          )}
+        </section>
+      )}
+
+      {location.pathname === "/void" && (
+        <section>
+          <h2>...you entered the void</h2>
+          <p>The walls echo nothing. Or do they?</p>
+        </section>
+      )}
+
+      {location.pathname === "/echo" && (
+        <section>
+          <h2>Echo Chamber</h2>
+          <p>Ask, and maybe... the code will respond.</p>
+        </section>
+      )}
+
+      {location.pathname === "/keys" && (
+        <section>
+          <h2>Keys to the Gate</h2>
+          <p>One is missing. Are you the bearer?</p>
+        </section>
+      )}
+
+      {secretUnlocked && (
+        <section className="hidden-path">
+          <h2>You Found Me</h2>
+          <p>Now the serpent speaks directly.</p>
+        </section>
+      )}
+    </main>
+  );
+}
